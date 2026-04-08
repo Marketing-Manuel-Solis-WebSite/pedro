@@ -1,0 +1,20 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/followup",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/window-closer",
+      "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/consent-audit",
+      "schedule": "0 8 * * 1"
+    },
+    {
+      "path": "/api/cron/analytics-rollup",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}
