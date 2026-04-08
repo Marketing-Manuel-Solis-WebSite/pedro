@@ -26,6 +26,7 @@ const routes: RouteTest[] = [
   { method: "GET", path: "/dashboard/settings", expectedStatus: [307, 302], description: "Settings (no auth)" },
   { method: "GET", path: "/dashboard/audit", expectedStatus: [307, 302], description: "Audit (no auth)" },
   { method: "GET", path: "/dashboard/widget", expectedStatus: [307, 302], description: "Widget config (no auth)" },
+  { method: "GET", path: "/dashboard/users", expectedStatus: [307, 302], description: "Users page (no auth)" },
   { method: "POST", path: "/api/cron/followup", expectedStatus: [401], description: "Cron followup (no secret)" },
   { method: "POST", path: "/api/cron/window-closer", expectedStatus: [401], description: "Cron window-closer (no secret)" },
   { method: "POST", path: "/api/cron/consent-audit", expectedStatus: [401], description: "Cron consent-audit (no secret)" },

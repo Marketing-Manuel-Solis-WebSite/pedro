@@ -34,13 +34,7 @@
 - [ ] Copy REST URL -> `UPSTASH_REDIS_REST_URL`
 - [ ] Copy REST Token -> `UPSTASH_REDIS_REST_TOKEN`
 
-### 5. Google Analytics & Ads
-- [ ] Create GA4 property, get Measurement ID -> `NEXT_PUBLIC_GA4_MEASUREMENT_ID`
-- [ ] Set up conversion action in Google Ads for WhatsApp clicks
-- [ ] Copy Conversion ID and Label -> env vars
-- [ ] Complete Advertiser Verification in Google Ads
-
-### 6. Generate Secrets
+### 5. Generate Secrets
 ```bash
 # Encryption key for sensitive fields
 openssl rand -hex 32
@@ -76,11 +70,6 @@ In Vercel Dashboard > Project Settings > Environment Variables, add ALL variable
 - `NEXT_PUBLIC_PRIVACY_POLICY_VERSION`
 - `NEXT_PUBLIC_CONSENT_TEXT_VERSION`
 - `NEXT_PUBLIC_WA_NUMBER_*` (all office numbers)
-
-**Production + Preview only:**
-- `NEXT_PUBLIC_GA4_MEASUREMENT_ID`
-- `NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID`
-- `NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL`
 
 **Production only (secrets):**
 - `SUPABASE_SERVICE_ROLE_KEY`

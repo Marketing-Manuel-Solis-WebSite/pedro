@@ -64,5 +64,6 @@ export const config = {
     "/api/messages/:path*",
     "/api/templates/:path*",
     "/api/ai/:path*",
+    "/api/users/:path*",
   ],
 };

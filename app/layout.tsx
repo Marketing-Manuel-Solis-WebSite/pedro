@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { DM_Serif_Display, Source_Sans_3, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -41,26 +40,7 @@ export default function RootLayout({
       lang="es"
       className={`${dmSerifDisplay.variable} ${sourceSans3.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-body">
-        {children}
-        {process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="gtag-init" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID}');
-                ${process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID ? `gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID}');` : ""}
-              `}
-            </Script>
-          </>
-        )}
-      </body>
+      <body className="min-h-full flex flex-col font-body">{children}</body>
     </html>
   );
 }

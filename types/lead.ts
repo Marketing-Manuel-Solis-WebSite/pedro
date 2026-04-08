@@ -1,14 +1,48 @@
 export type LeadStatus =
   | "new"
-  | "qualified"
+  | "ai_qualified"
   | "assigned"
-  | "in_progress"
-  | "closed_won"
+  | "contacted"
+  | "consultation"
+  | "proposal_sent"
+  | "negotiation"
+  | "contracted"
+  | "in_process"
+  | "completed"
   | "closed_lost"
+  | "closed_no_response"
   | "spam"
   | "archived";
 
 export type LeadPriority = "low" | "normal" | "high" | "urgent";
+
+export interface LeadStatusConfig {
+  label: string;
+  color: string;
+  order: number;
+}
+
+export const LEAD_STATUS_CONFIG: Record<LeadStatus, LeadStatusConfig> = {
+  new:                { label: "Nuevo",              color: "#718096", order: 0 },
+  ai_qualified:       { label: "Calificado IA",     color: "#4299e1", order: 1 },
+  assigned:           { label: "Asignado",           color: "#805ad5", order: 2 },
+  contacted:          { label: "Contactado",         color: "#d69e2e", order: 3 },
+  consultation:       { label: "En consulta",        color: "#ed8936", order: 4 },
+  proposal_sent:      { label: "Propuesta enviada",  color: "#e53e3e", order: 5 },
+  negotiation:        { label: "En negociacion",     color: "#dd6b20", order: 6 },
+  contracted:         { label: "Contratado",         color: "#38a169", order: 7 },
+  in_process:         { label: "En tramite",         color: "#319795", order: 8 },
+  completed:          { label: "Completado",         color: "#2f855a", order: 9 },
+  closed_lost:        { label: "Perdido",            color: "#e53e3e", order: 10 },
+  closed_no_response: { label: "Sin respuesta",      color: "#a0aec0", order: 11 },
+  spam:               { label: "Spam",               color: "#fc8181", order: 12 },
+  archived:           { label: "Archivado",          color: "#cbd5e0", order: 13 },
+};
+
+export const PIPELINE_STAGES: LeadStatus[] = [
+  "new", "ai_qualified", "assigned", "contacted", "consultation",
+  "proposal_sent", "negotiation", "contracted", "in_process", "completed",
+];
 
 export interface Lead {
   id: string;

@@ -12,14 +12,20 @@ interface LeadCardProps {
 }
 
 const statusLabels: Record<string, { label: string; class: string }> = {
-  new: { label: "Nuevo", class: "bg-blue-100 text-blue-800" },
-  qualified: { label: "Calificado", class: "bg-purple-100 text-purple-800" },
-  assigned: { label: "Asignado", class: "bg-green-100 text-green-800" },
-  in_progress: { label: "En proceso", class: "bg-teal-100 text-teal-800" },
-  closed_won: { label: "Cerrado (ganado)", class: "bg-green-100 text-green-800" },
-  closed_lost: { label: "Cerrado (perdido)", class: "bg-gray-100 text-gray-800" },
-  spam: { label: "Spam", class: "bg-red-100 text-red-800" },
-  archived: { label: "Archivado", class: "bg-gray-50 text-gray-500" },
+  new: { label: "Nuevo", class: "bg-gray-100 text-gray-800" },
+  ai_qualified: { label: "Calificado IA", class: "bg-blue-100 text-blue-800" },
+  assigned: { label: "Asignado", class: "bg-purple-100 text-purple-800" },
+  contacted: { label: "Contactado", class: "bg-yellow-100 text-yellow-800" },
+  consultation: { label: "En consulta", class: "bg-orange-100 text-orange-800" },
+  proposal_sent: { label: "Propuesta", class: "bg-red-100 text-red-800" },
+  negotiation: { label: "Negociacion", class: "bg-amber-100 text-amber-800" },
+  contracted: { label: "Contratado", class: "bg-green-100 text-green-800" },
+  in_process: { label: "En tramite", class: "bg-teal-100 text-teal-800" },
+  completed: { label: "Completado", class: "bg-emerald-100 text-emerald-800" },
+  closed_lost: { label: "Perdido", class: "bg-red-100 text-red-700" },
+  closed_no_response: { label: "Sin respuesta", class: "bg-gray-100 text-gray-500" },
+  spam: { label: "Spam", class: "bg-red-50 text-red-600" },
+  archived: { label: "Archivado", class: "bg-gray-50 text-gray-400" },
 };
 
 const priorityLabels: Record<string, { label: string; class: string }> = {

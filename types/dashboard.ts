@@ -9,8 +9,14 @@ export interface TeamMember {
   office_location: string | null;
   specialties: string[];
   is_available: boolean;
+  is_active: boolean;
+  can_receive_assignments: boolean;
   max_concurrent_chats: number;
   current_chat_count: number;
+  last_assigned_at: string | null;
+  total_assigned: number;
+  total_closed_won: number;
+  total_closed_lost: number;
   phone: string | null;
   avatar_url: string | null;
   created_at: string;

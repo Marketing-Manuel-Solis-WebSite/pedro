@@ -75,8 +75,6 @@ export default function SettingsPage() {
               <EnvStatus label="Supabase" configured={!!process.env.NEXT_PUBLIC_SUPABASE_URL} />
               <EnvStatus label="WhatsApp API" configured={false} hint="Server-side only" />
               <EnvStatus label="Gemini AI" configured={false} hint="Server-side only" />
-              <EnvStatus label="Google Analytics" configured={!!process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID} />
-              <EnvStatus label="Google Ads" configured={!!process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID} />
             </div>
           </div>
         </section>

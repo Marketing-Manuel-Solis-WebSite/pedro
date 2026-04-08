@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       .from("leads")
       .select("*")
       .eq("is_opted_out", false)
-      .in("status", status ? [status] : ["new", "qualified", "assigned"])
+      .in("status", status ? [status] : ["new", "ai_qualified", "assigned", "contacted", "consultation", "proposal_sent", "negotiation"])
       .order("priority", { ascending: false })
       .order("last_user_message_at", { ascending: false })
       .limit(50);

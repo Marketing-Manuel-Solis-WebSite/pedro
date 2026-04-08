@@ -255,18 +255,29 @@ async function handleIncomingMessage(message: WAMessage, contactName?: string) {
         case_type: qualification.detected_case_type,
         office_location: qualification.suggested_office,
         last_bot_message_at: new Date().toISOString(),
-        ...(qualification.should_handoff ? { status: "qualified" } : {}),
+        ...(qualification.should_handoff || qualification.qualification_score > 60
+          ? { status: "ai_qualified" }
+          : {}),
       })
       .eq("id", lead.id);
 
-    // Handle handoff
-    if (qualification.should_handoff) {
+    // Auto-assign via round robin if qualified for handoff
+    if (qualification.should_handoff || qualification.qualification_score > 60) {
       await supabase.from("conversation_events").insert({
         lead_id: lead.id,
         event_type: "handoff_to_human",
         event_data: { reason: qualification.handoff_reason },
         triggered_by: "bot",
       });
+
+      // Round robin assignment
+      const { data: assigneeId } = await supabase.rpc("round_robin_assign", {
+        p_lead_id: lead.id,
+      });
+
+      if (assigneeId) {
+        console.log(`Lead ${lead.id} auto-assigned to ${assigneeId}`);
+      }
     }
 
     if (qualification.next_action === "continue_bot" && lead.status === "new") {

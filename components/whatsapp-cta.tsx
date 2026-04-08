@@ -2,12 +2,11 @@
 
 import { useCallback } from "react";
 import { ConsentMicrocopy, getConsentTextForRecording } from "./consent-microcopy";
-import { trackWhatsAppClick, trackConsentError } from "@/lib/analytics/tracker";
 import type { ConsentLanguage } from "@/lib/config/consent";
 
 interface WhatsAppCTAProps {
   variant: "hero" | "floating" | "inline";
-  officePhone: string; // E.164 format
+  officePhone: string;
   officeName: string;
   officeSlug: string;
   prefilledMessage?: string;
@@ -17,10 +16,6 @@ interface WhatsAppCTAProps {
 
 const CONSENT_TIMEOUT_MS = 2000;
 const FAILED_CONSENT_KEY = "pedro_failed_consents";
-
-function generateUUID(): string {
-  return crypto.randomUUID();
-}
 
 function getUTMParams(): Record<string, string | null> {
   if (typeof window === "undefined") return {};
@@ -40,7 +35,7 @@ function queueFailedConsent(payload: Record<string, unknown>): void {
     existing.push(payload);
     localStorage.setItem(FAILED_CONSENT_KEY, JSON.stringify(existing));
   } catch {
-    // localStorage unavailable, silently fail
+    // localStorage unavailable
   }
 }
 
@@ -54,30 +49,13 @@ export function WhatsAppCTA({
   language = "es",
 }: WhatsAppCTAProps) {
   const handleClick = useCallback(async () => {
-    // 1. Capture timestamp
-    const timestamp = new Date().toISOString();
-
-    // 2. Capture current URL
     const sourceUrl = window.location.href;
-
-    // 3. Parse UTM parameters
     const utms = getUTMParams();
-
-    // 4. Get exact legal microcopy
     const consentInfo = getConsentTextForRecording(language);
+    const consentEventId = crypto.randomUUID();
 
-    // 5. Destination phone
-    const destinationPhone = officePhone;
-
-    // 6. User agent
-    const userAgent = navigator.userAgent;
-
-    // 7. Generate consent_event_id
-    const consentEventId = generateUUID();
-
-    // 8. Build consent payload
     const consentPayload = {
-      phone: "", // Will be filled by WhatsApp webhook when user messages
+      phone: "",
       consent_type: "whatsapp_initial" as const,
       consent_method: "button_click" as const,
       source_url: sourceUrl,
@@ -92,65 +70,36 @@ export function WhatsAppCTA({
       legal_text_version: consentInfo.version,
       privacy_policy_url: consentInfo.privacyUrl,
       privacy_policy_version: consentInfo.privacyPolicyVersion,
-      destination_phone: destinationPhone,
+      destination_phone: officePhone,
       device_fingerprint: null,
       language,
       consent_event_id: consentEventId,
-      timestamp,
     };
 
-    // 9. Fire POST /api/consent (with timeout)
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), CONSENT_TIMEOUT_MS);
-
       const response = await fetch("/api/consent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(consentPayload),
         signal: controller.signal,
       });
-
       clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`Consent API returned ${response.status}`);
-      }
-    } catch (err) {
-      // Queue for retry — do NOT block user
+      if (!response.ok) throw new Error(`${response.status}`);
+    } catch {
       queueFailedConsent(consentPayload);
-      trackConsentError({
-        officeName,
-        error: err instanceof Error ? err.message : "Unknown error",
-      });
     }
 
-    // 10 & 11. Fire analytics events
-    trackWhatsAppClick({
-      officeName,
-      campaignId: campaignId ?? utms.utm_campaign,
-      consentEventId,
-      officeSlug,
-    });
-
-    // 12. Open WhatsApp
     const phone = officePhone.replace("+", "");
-    const message = prefilledMessage
-      ? encodeURIComponent(prefilledMessage)
-      : "";
-    const waUrl = `https://wa.me/${phone}${message ? `?text=${message}` : ""}`;
-    window.open(waUrl, "_blank", "noopener,noreferrer");
+    const message = prefilledMessage ? encodeURIComponent(prefilledMessage) : "";
+    window.open(`https://wa.me/${phone}${message ? `?text=${message}` : ""}`, "_blank", "noopener,noreferrer");
   }, [officePhone, officeName, officeSlug, prefilledMessage, campaignId, language]);
 
   if (variant === "hero") {
     return (
       <div className="flex flex-col items-center gap-3">
-        <button
-          type="button"
-          onClick={handleClick}
-          className="inline-flex items-center gap-3 rounded-xl bg-whatsapp px-8 py-4 text-lg font-semibold text-white shadow-wa transition-all duration-[var(--transition-normal)] hover:brightness-110 hover:shadow-lg active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-whatsapp focus:ring-offset-2"
-          aria-label="Escríbenos por WhatsApp"
-        >
+        <button type="button" onClick={handleClick} className="inline-flex items-center gap-3 rounded-xl bg-whatsapp px-8 py-4 text-lg font-semibold text-white shadow-wa transition-all hover:brightness-110 hover:shadow-lg active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-whatsapp focus:ring-offset-2" aria-label="WhatsApp">
           <WhatsAppIcon className="h-6 w-6" />
           {language === "en" ? "Message us on WhatsApp" : "Escríbenos por WhatsApp"}
         </button>
@@ -162,21 +111,15 @@ export function WhatsAppCTA({
   if (variant === "inline") {
     return (
       <div className="flex flex-col gap-2">
-        <button
-          type="button"
-          onClick={handleClick}
-          className="inline-flex items-center gap-2 rounded-lg bg-whatsapp px-6 py-3 text-base font-semibold text-white shadow-wa transition-all duration-[var(--transition-normal)] hover:brightness-110 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-whatsapp focus:ring-offset-2"
-          aria-label="Escríbenos por WhatsApp"
-        >
+        <button type="button" onClick={handleClick} className="inline-flex items-center gap-2 rounded-lg bg-whatsapp px-6 py-3 text-base font-semibold text-white shadow-wa transition-all hover:brightness-110 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-whatsapp focus:ring-offset-2" aria-label="WhatsApp">
           <WhatsAppIcon className="h-5 w-5" />
-          {language === "en" ? "WhatsApp" : "WhatsApp"}
+          WhatsApp
         </button>
         <ConsentMicrocopy language={language} className="max-w-xs" />
       </div>
     );
   }
 
-  // floating variant is handled by FloatingWhatsApp component
   return null;
 }
 
