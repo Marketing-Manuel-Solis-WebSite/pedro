@@ -6,6 +6,19 @@ import type { Message } from "@/types/message";
 
 const firmName = process.env.NEXT_PUBLIC_FIRM_NAME || "Abogados de Inmigración";
 
+const SAFE_HANDOFF = {
+  response_text:
+    "Gracias por tu mensaje. Te comunico con un asesor que podrá ayudarte. Responderá en menos de 5 minutos hábiles.",
+  intent: "hablar_persona" as const,
+  should_handoff: true,
+  handoff_reason: "ai_error",
+  qualification_score: 50,
+  detected_case_type: null,
+  detected_urgency: "normal" as const,
+  suggested_office: null,
+  next_action: "handoff_human" as const,
+};
+
 export async function POST(request: NextRequest) {
   try {
     const { lead_id } = (await request.json()) as { lead_id: string };
@@ -16,7 +29,6 @@ export async function POST(request: NextRequest) {
 
     const supabase = createSupabaseAdmin();
 
-    // Get conversation history
     const { data: messages, error: msgErr } = await supabase
       .from("messages")
       .select("*")
@@ -25,7 +37,10 @@ export async function POST(request: NextRequest) {
       .limit(20);
 
     if (msgErr) {
-      return NextResponse.json({ error: "Failed to fetch messages" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Failed to fetch messages" },
+        { status: 500 }
+      );
     }
 
     const officeNames = offices.map((o) => `${o.city}, ${o.stateCode}`);
@@ -35,7 +50,6 @@ export async function POST(request: NextRequest) {
       officeNames
     );
 
-    // Update lead
     await supabase
       .from("leads")
       .update({
@@ -47,11 +61,21 @@ export async function POST(request: NextRequest) {
       .eq("id", lead_id);
 
     return NextResponse.json(result, { status: 200 });
-  } catch (err) {
-    console.error("AI qualify error:", err);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    console.error("AI qualification error:", error);
+
+    // Check if safety filter block
+    if (
+      error instanceof Error &&
+      error.message.includes("SAFETY")
+    ) {
+      return NextResponse.json(
+        { ...SAFE_HANDOFF, handoff_reason: "safety_filter_block" },
+        { status: 200 }
+      );
+    }
+
+    // Return 200 even on AI error — the webhook should not retry
+    return NextResponse.json(SAFE_HANDOFF, { status: 200 });
   }
 }

@@ -21,10 +21,13 @@
 - [ ] Generate a random verify token: `openssl rand -hex 32`
 - [ ] Submit templates for approval (start with followup_inactive_24h)
 
-### 3. Anthropic
-- [ ] Create API key at console.anthropic.com
-- [ ] Set spending limit appropriate for expected volume
-- [ ] Copy key -> `ANTHROPIC_API_KEY`
+### 3. Google AI (Gemini)
+- [ ] Go to https://aistudio.google.com/apikey
+- [ ] Click "Create API Key"
+- [ ] Select or create a Google Cloud project
+- [ ] Copy the API key -> `GEMINI_API_KEY`
+- [ ] (Optional) Set up billing in Google Cloud Console for higher rate limits
+- [ ] Free tier: 15 RPM, 1M TPM, 1500 RPD — sufficient for low-medium volume
 
 ### 4. Upstash Redis
 - [ ] Create database at console.upstash.com (choose region near Vercel)
@@ -83,7 +86,7 @@ In Vercel Dashboard > Project Settings > Environment Variables, add ALL variable
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `WHATSAPP_ACCESS_TOKEN`
 - `WHATSAPP_APP_SECRET`
-- `ANTHROPIC_API_KEY`
+- `GEMINI_API_KEY`
 - `UPSTASH_REDIS_REST_URL`
 - `UPSTASH_REDIS_REST_TOKEN`
 - `FIELD_ENCRYPTION_KEY`

@@ -4,7 +4,8 @@ import { resolve } from "path";
 
 config({ path: resolve(__dirname, "../.env.local") });
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const PORT = process.argv.find((a) => a.startsWith("--port="))?.split("=")[1] || "3000";
+const BASE_URL = process.env.TEST_BASE_URL || `http://localhost:${PORT}`;
 
 async function main() {
   const consentEventId = randomUUID();

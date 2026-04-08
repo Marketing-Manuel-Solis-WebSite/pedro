@@ -27,7 +27,13 @@ export async function GET(request: NextRequest) {
 
 // POST: Incoming messages and status updates
 export async function POST(request: NextRequest) {
-  const rawBody = await request.text();
+  let rawBody: string;
+  try {
+    rawBody = await request.text();
+  } catch {
+    return NextResponse.json({ error: "Invalid body" }, { status: 400 });
+  }
+
   const signature = request.headers.get("x-hub-signature-256");
 
   // Validate signature
@@ -35,22 +41,42 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
   }
 
-  const body: WAIncomingMessage = JSON.parse(rawBody);
+  let body: WAIncomingMessage;
+  try {
+    body = JSON.parse(rawBody);
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  if (!body.entry || !Array.isArray(body.entry)) {
+    return NextResponse.json({ status: "ok" }, { status: 200 });
+  }
 
   // Process each entry
   for (const entry of body.entry) {
+    if (!entry.changes || !Array.isArray(entry.changes)) continue;
+
     for (const change of entry.changes) {
+      if (!change.value) continue;
       const { messages, statuses } = change.value;
 
-      if (messages) {
+      if (messages && Array.isArray(messages)) {
         for (const message of messages) {
-          await handleIncomingMessage(message, change.value.contacts?.[0]?.profile?.name);
+          try {
+            await handleIncomingMessage(message, change.value.contacts?.[0]?.profile?.name);
+          } catch (err) {
+            console.error("Error handling message:", err);
+          }
         }
       }
 
-      if (statuses) {
+      if (statuses && Array.isArray(statuses)) {
         for (const status of statuses) {
-          await handleStatusUpdate(status);
+          try {
+            await handleStatusUpdate(status);
+          } catch (err) {
+            console.error("Error handling status:", err);
+          }
         }
       }
     }
