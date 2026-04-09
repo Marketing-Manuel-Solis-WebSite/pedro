@@ -29,7 +29,7 @@ async function main() {
     legal_text_version: "consent-microcopy-es-v1.0",
     privacy_policy_url: "http://localhost:3000/privacidad",
     privacy_policy_version: "v1.0",
-    destination_phone: "+15551234567",
+    destination_phone: "+17138763560",
     language: "es",
     device_fingerprint: "test-script-001",
   };

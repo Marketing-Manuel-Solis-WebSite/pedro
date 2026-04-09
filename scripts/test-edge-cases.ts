@@ -125,7 +125,7 @@ const tests: TestCase[] = [
   {
     name: "Widget: serves JavaScript",
     run: async () => {
-      const res = await fetch(`${BASE}/api/widget?office=texas&phone=%2B15551234567&lang=es`);
+      const res = await fetch(`${BASE}/api/widget?lang=es`);
       const ct = res.headers.get("content-type") || "";
       const body = await res.text();
       return { status: res.status, pass: res.status === 200 && ct.includes("javascript") && body.includes("wa-lead-widget"), detail: `CT: ${ct.substring(0, 40)}` };

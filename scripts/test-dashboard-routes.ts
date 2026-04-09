@@ -15,7 +15,7 @@ interface RouteTest {
 
 const routes: RouteTest[] = [
   { method: "GET", path: "/login", expectedStatus: [200], description: "Login page" },
-  { method: "GET", path: "/api/widget?office=texas&phone=%2B15551234567&lang=es", expectedStatus: [200], description: "Widget JS" },
+  { method: "GET", path: "/api/widget?lang=es", expectedStatus: [200], description: "Widget JS" },
   { method: "GET", path: "/api/widget/embed?office=texas", expectedStatus: [200], description: "Widget embed snippet" },
   { method: "POST", path: "/api/consent", expectedStatus: [400], description: "Consent (empty body = 400)" },
   { method: "GET", path: "/api/webhook/whatsapp?hub.mode=subscribe&hub.verify_token=invalid&hub.challenge=test", expectedStatus: [403], description: "Webhook verify (bad token)" },

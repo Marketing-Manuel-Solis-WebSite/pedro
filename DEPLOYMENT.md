@@ -69,7 +69,7 @@ In Vercel Dashboard > Project Settings > Environment Variables, add ALL variable
 - `NEXT_PUBLIC_SITE_URL` (different per environment)
 - `NEXT_PUBLIC_PRIVACY_POLICY_VERSION`
 - `NEXT_PUBLIC_CONSENT_TEXT_VERSION`
-- `NEXT_PUBLIC_WA_NUMBER_*` (all office numbers)
+- `NEXT_PUBLIC_WA_NUMBER` (global WhatsApp number)
 
 **Production only (secrets):**
 - `SUPABASE_SERVICE_ROLE_KEY`

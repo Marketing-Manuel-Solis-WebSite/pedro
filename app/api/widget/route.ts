@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const office = searchParams.get("office") || "texas";
-  const phone = (searchParams.get("phone") || process.env.NEXT_PUBLIC_WA_NUMBER_TEXAS || "").replace(/[^+\d]/g, "");
+  const phone = (searchParams.get("phone") || process.env.NEXT_PUBLIC_WA_NUMBER || "+17138763560").replace(/[^+\d]/g, "");
   const lang = searchParams.get("lang") || "es";
   const firm = searchParams.get("firm") || process.env.NEXT_PUBLIC_FIRM_NAME || "";
   const platformUrl = process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin;
